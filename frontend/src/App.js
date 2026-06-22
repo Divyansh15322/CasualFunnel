@@ -4,10 +4,11 @@ import Sessions from './Sessions';
 import Heatmap from './Heatmap';
 import './App.css';
 
-function StatCard({ label, value, color }) {
+function StatCard({ label, value, icon, iconBg, valueColor }) {
   return (
     <div className="stat-card">
-      <div className="stat-value" style={{ color }}>{value ?? '—'}</div>
+      <div className="stat-icon" style={{ background: iconBg }}>{icon}</div>
+      <div className="stat-value" style={{ color: valueColor }}>{value ?? '—'}</div>
       <div className="stat-label">{label}</div>
     </div>
   );
@@ -36,57 +37,80 @@ export default function App() {
 
   return (
     <div className="app">
+      {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <rect width="28" height="28" rx="8" fill="#5b6ef5"/>
-            <circle cx="9" cy="19" r="3" fill="white"/>
-            <circle cx="14" cy="12" r="3" fill="white" opacity=".7"/>
-            <circle cx="20" cy="7" r="3" fill="white" opacity=".4"/>
-            <line x1="9" y1="19" x2="14" y2="12" stroke="white" strokeWidth="1.5" opacity=".5"/>
-            <line x1="14" y1="12" x2="20" y2="7" stroke="white" strokeWidth="1.5" opacity=".3"/>
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect width="26" height="26" rx="7" fill="#2563EB"/>
+            <circle cx="8"  cy="18" r="2.8" fill="white"/>
+            <circle cx="13" cy="11" r="2.8" fill="white" opacity=".75"/>
+            <circle cx="19" cy="6"  r="2.8" fill="white" opacity=".45"/>
+            <line x1="8" y1="18" x2="13" y2="11" stroke="white" strokeWidth="1.4" opacity=".5"/>
+            <line x1="13" y1="11" x2="19" y2="6" stroke="white" strokeWidth="1.4" opacity=".3"/>
           </svg>
-          <span>CausalFunnel</span>
+          <span style={{ color: 'var(--text)' }}>CausalFunnel</span>
         </div>
 
+        <div className="sidebar-section-label">Analytics</div>
         <nav className="sidebar-nav">
           <button
             className={"nav-item" + (tab === 'sessions' ? ' active' : '')}
             onClick={() => setTab('sessions')}
           >
-            <GridIcon /> Sessions
+            <GridIcon active={tab === 'sessions'} />
+            Sessions
           </button>
           <button
             className={"nav-item" + (tab === 'heatmap' ? ' active' : '')}
             onClick={() => setTab('heatmap')}
           >
-            <HeatIcon /> Heatmap
+            <HeatIcon active={tab === 'heatmap'} />
+            Heatmap
           </button>
         </nav>
 
         <div className="sidebar-footer">
-          <span className="live-dot" />
-          Live tracking
+          <div className="live-indicator">
+            <span className="live-dot" />
+            <span>Live tracking active</span>
+          </div>
         </div>
       </aside>
 
+      {/* Main */}
       <div className="main">
         <header className="topbar">
-          <div>
+          <div className="topbar-left">
+            <div className="page-breadcrumb">Dashboard</div>
             <h1 className="page-title">
               {tab === 'sessions' ? 'Sessions' : 'Click Heatmap'}
             </h1>
-            {error && <span className="error-pill">⚠ Cannot reach API</span>}
           </div>
-          <button className="refresh-btn" onClick={loadStats} title="Refresh">↺</button>
+          <div className="topbar-right">
+            {error && (
+              <span className="error-pill">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M6 1L11 10H1L6 1z" fillOpacity=".15" stroke="currentColor" strokeWidth="1"/>
+                  <text x="6" y="9" textAnchor="middle" fontSize="6" fontWeight="700">!</text>
+                </svg>
+                API unreachable
+              </span>
+            )}
+            <button className="refresh-btn" onClick={loadStats} title="Refresh stats">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M12 7A5 5 0 1 1 7 2"/>
+                <polyline points="7 0 9.5 2.5 7 5"/>
+              </svg>
+            </button>
+          </div>
         </header>
 
         {stats && (
           <div className="stats-row">
-            <StatCard label="Sessions"    value={stats.sessions?.toLocaleString()}     color="#5b6ef5" />
-            <StatCard label="Events"      value={stats.total_events?.toLocaleString()}  color="#e8eaf0" />
-            <StatCard label="Page Views"  value={stats.page_views?.toLocaleString()}    color="#38e5a8" />
-            <StatCard label="Clicks"      value={stats.clicks?.toLocaleString()}        color="#f5a623" />
+            <StatCard label="Sessions"   value={stats.sessions?.toLocaleString()}    icon="👥" iconBg="#EEF4FF" valueColor="#2563EB" />
+            <StatCard label="Events"     value={stats.total_events?.toLocaleString()} icon="⚡" iconBg="#F5F3FF" valueColor="#7C3AED" />
+            <StatCard label="Page Views" value={stats.page_views?.toLocaleString()}  icon="👁" iconBg="#ECFDF5" valueColor="#059669" />
+            <StatCard label="Clicks"     value={stats.clicks?.toLocaleString()}      icon="🖱" iconBg="#FFFBEB" valueColor="#D97706" />
           </div>
         )}
 
@@ -98,9 +122,9 @@ export default function App() {
   );
 }
 
-function GridIcon() {
+function GridIcon({ active }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill={active ? '#2563EB' : 'currentColor'}>
       <rect x="1" y="1" width="6" height="6" rx="1.5"/>
       <rect x="9" y="1" width="6" height="6" rx="1.5"/>
       <rect x="1" y="9" width="6" height="6" rx="1.5"/>
@@ -109,10 +133,11 @@ function GridIcon() {
   );
 }
 
-function HeatIcon() {
+function HeatIcon({ active }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+      stroke={active ? '#2563EB' : 'currentColor'} strokeWidth="1.5">
+      <circle cx="8" cy="8" r="2.5" fill={active ? '#2563EB' : 'currentColor'}/>
       <circle cx="8" cy="8" r="5"/>
       <circle cx="8" cy="8" r="7.5" strokeOpacity=".3"/>
     </svg>
