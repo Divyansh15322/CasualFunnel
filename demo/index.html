@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CausalFunnel Demo Store</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161922;
+      --border: #252a35;
+      --text: #e8eaf0;
+      --muted: #7a8099;
+      --accent: #5b6ef5;
+      --accent2: #38e5a8;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(13,15,20,.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -.02em; color: var(--text); }
+    .logo span { color: var(--accent); }
+    nav ul { display: flex; gap: 32px; list-style: none; }
+    nav ul a { color: var(--muted); text-decoration: none; font-size: .9rem; transition: color .2s; }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: .875rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 100px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(91,110,245,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(91,110,245,.15);
+      border: 1px solid rgba(91,110,245,.3);
+      color: var(--accent);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+      max-width: 720px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent2); }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s, opacity .15s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); opacity: .9; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); }
+
+    /* ── Products ── */
+    .section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      letter-spacing: -.02em;
+    }
+    .section-title span { color: var(--muted); font-weight: 400; font-size: 1rem; margin-left: 12px; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .product-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s, border-color .2s;
+    }
+    .product-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .product-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    .product-body { padding: 18px; }
+    .product-name { font-weight: 600; font-size: .95rem; margin-bottom: 6px; }
+    .product-desc { color: var(--muted); font-size: .82rem; line-height: 1.5; margin-bottom: 14px; }
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .price { font-weight: 700; font-size: 1.1rem; }
+    .add-btn {
+      background: rgba(91,110,245,.15);
+      color: var(--accent);
+      border: 1px solid rgba(91,110,245,.3);
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .add-btn:hover { background: rgba(91,110,245,.3); }
+
+    /* ── Tracker Status ── */
+    .tracker-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(56,229,168,.12);
+      border: 1px solid rgba(56,229,168,.3);
+      color: var(--accent2);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: .78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 999;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      background: var(--accent2);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(.8); }
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 40px;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav>
+  <div class="logo">Causal<span>Store</span></div>
+  <ul>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-cta">Sign up</button>
+</nav>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="hero-badge">🔴 Tracking Active</div>
+  <h1>Shop smarter.<br />Every click is <em>understood</em>.</h1>
+  <p>This is a demo store used to test the CausalFunnel analytics tracker. Browse around — your page views and clicks are being captured.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="scrollToProducts()">Explore Products</button>
+    <button class="btn-secondary" onclick="openDashboard()">View Dashboard</button>
+  </div>
+</div>
+
+<!-- ── Products ── -->
+<div class="section" id="products">
+  <div class="section-title">Featured Products <span>8 items</span></div>
+  <div class="products-grid" id="products-grid"></div>
+</div>
+
+<!-- ── Tracker Badge ── -->
+<div class="tracker-badge">
+  <div class="dot"></div>
+  Analytics Tracking
+</div>
+
+<footer>
+  <p>CausalFunnel Analytics Demo · Session ID: <code id="session-display">loading…</code></p>
+</footer>
+
+<!-- Inject tracker -->
+<script src="../tracker/tracker.js" data-endpoint="http://localhost:3001/api/events"></script>
+
+<script>
+  const PRODUCTS = [
+    { emoji: '💻', name: 'Pro Laptop Stand',   desc: 'Ergonomic aluminum stand for 13–17" laptops.',  price: '$49.99' },
+    { emoji: '🎧', name: 'Noise-Cancel Buds',  desc: 'Active noise cancellation, 30hr battery.',       price: '$129.00' },
+    { emoji: '🖱️', name: 'Silent Trackball',   desc: 'Wireless, ambidextrous, zero noise clicks.',     price: '$79.95' },
+    { emoji: '💡', name: 'LED Desk Lamp',       desc: 'Touch-controlled, 5 colour temps, USB-C port.',  price: '$34.50' },
+    { emoji: '📷', name: '4K Webcam',           desc: 'Ultra-wide 90° FOV, auto-focus & exposure.',    price: '$89.00' },
+    { emoji: '⌨️', name: 'Mech Keyboard TKL',  desc: 'Tactile switches, RGB backlit, aluminium body.', price: '$109.00' },
+    { emoji: '🔌', name: '100W GaN Charger',   desc: 'Charge 4 devices simultaneously, ultra-compact.',price: '$59.99' },
+    { emoji: '🖥️', name: '27" Monitor Arm',    desc: 'Full motion, cable management, VESA 75/100.',    price: '$45.00' },
+  ];
+
+  const grid = document.getElementById('products-grid');
+  PRODUCTS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-body">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <span class="price">${p.price}</span>
+          <button class="add-btn">Add to cart</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  // Show session id in footer
+  document.addEventListener('DOMContentLoaded', function () {
+    const el = document.getElementById('session-display');
+    if (window.CausalFunnel) el.textContent = window.CausalFunnel.sessionId;
+  });
+  // Fallback if script already ran
+  setTimeout(() => {
+    const el = document.getElementById('session-display');
+    if (window.CausalFunnel && el.textContent === 'loading…')
+      el.textContent = window.CausalFunnel.sessionId;
+  }, 500);
+
+  function scrollToProducts() {
+    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+  }
+  function openDashboard() {
+    window.open('http://localhost:3000', '_blank');
+  }
+</script>
+</body>
+</html>
