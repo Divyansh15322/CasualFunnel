@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors({
   origin: [
-    'https://casual-funnel-liart.vercel.app/',
+    'https://casual-funnel-liart.vercel.app',
     'http://localhost:3000',
   ],
   methods: ['GET', 'POST', 'OPTIONS'],
