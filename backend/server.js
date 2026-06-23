@@ -8,7 +8,10 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: '*',
+  origin: [
+    'https://casual-funnel-liart.vercel.app/',
+    'http://localhost:3000',
+  ],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
 }));
@@ -191,3 +194,10 @@ app.get('/api/stats', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+// Keep-alive for Render free tier
+if (process.env.RENDER) {
+  const SELF = process.env.RENDER_EXTERNAL_URL;
+  setInterval(() => {
+    fetch(`${SELF}/health`).catch(() => {});
+  }, 10 * 60 * 1000); // ping every 10 minutes
+}
